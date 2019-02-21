@@ -8,29 +8,55 @@ import Widget from '../components/Widget'
 import TrendsArea from '../components/TrendsArea'
 import Tweet from '../components/Tweet'
 
+
+c
+
 class App extends Component {
     constructor() {
         super()
         this.state = {
             novoTweet: 'xablau',
-            tweets: ['Tweet falso', 'Tweet falso 2']
+            tweets: []
         }
         // this.adicionaEvento = this.adicionaEvento.bind(this)
+        console.log('constructor')
+    }
+
+    componentDidMount() {
+        console.log('didMount')
+        // Façam o códego que pega os tweets do server:
+            // - https://twitelum-api.herokuapp.com/tweets
     }
 
     adicionaTweet = (infosDoEvento) => {
         infosDoEvento.preventDefault()
-        console.log('Capturando o evento', this)
-        // this.state.tweets.push(this.state.novoTweet)
-        this.setState({
-            tweets: [this.state.novoTweet, ...this.state.tweets],
-            novoTweet: ''
+        
+
+        fetch(`https://twitelum-api.herokuapp.com/tweets?X-AUTH-TOKEN=${localStorage.getItem('TOKEN')}`, {
+            method: 'POST',
+            body: JSON.stringify({ conteudo: this.state.novoTweet })
         })
+        .then((respostaDoServer) => {
+            if(respostaDoServer.ok) return respostaDoServer.json()
+            
+            throw new Error('Deu merda :(') 
+        })
+        .then((tweetQueVeioDoServer) => {
+            console.log(tweetQueVeioDoServer)
+            this.setState({
+                tweets: [tweetQueVeioDoServer, ...this.state.tweets],
+                novoTweet: ''
+            })
+        })
+        .catch((err) => {
+            console.error(err)
+        })
+        
         // Performance <------------------------------> Legibilidade
     }
 
   render() {
-    console.log('render executou')
+    console.log('render')
     return (
       <Fragment>
         <Cabecalho>
@@ -70,13 +96,13 @@ class App extends Component {
                     <div className="tweetsArea">
                         { 
                             this.state.tweets.map((tweetAtual, indice) => {
+                                console.log(tweetAtual)
                                 return (
                                     <Tweet
                                         key={indice}
-                                        user="@qualquercoisa"
-                                        name="Guilhermino da Silva"
-                                        likes="34">
-                                        { tweetAtual }
+                                        usuario={tweetAtual.usuario}
+                                        likes={tweetAtual.totalLikes}>
+                                        { tweetAtual.conteudo }
                                     </Tweet>
                                 )
                             })

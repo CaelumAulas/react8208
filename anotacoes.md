@@ -23,6 +23,11 @@
     - https://github.com/gaearon
     - 
 
+
+- Formas de organizar css:
+    - BEM: https://blog.alura.com.br/criando-componentes-css-com-padrao-bem/
+    - RSCSS: https://willianjusten.com.br/falando-sobre-rscss/
+
 - RxJS: 
     - Começa por aqui: https://www.youtube.com/watch?v=uQ1zhJHclvs
     - Promise vs Observable: https://staltz.com/promises-are-not-neutral-enough.html
