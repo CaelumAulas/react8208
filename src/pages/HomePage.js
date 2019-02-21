@@ -2,6 +2,7 @@ import React, { Component, Fragment } from 'react';
 import Cabecalho from '../components/Cabecalho'
 import NavMenu from '../components/NavMenu'
 import '../components/NovoTweet/novoTweet.css';
+// import NovoTweet from '../components/NovoTweet'
 import Dashboard from '../components/Dashboard'
 import Widget from '../components/Widget'
 import TrendsArea from '../components/TrendsArea'
@@ -14,12 +15,10 @@ class App extends Component {
             novoTweet: 'xablau',
             tweets: ['Tweet falso', 'Tweet falso 2']
         }
-
-
         // this.adicionaEvento = this.adicionaEvento.bind(this)
     }
 
-    adicionaEvento = (infosDoEvento) => {
+    adicionaTweet = (infosDoEvento) => {
         infosDoEvento.preventDefault()
         console.log('Capturando o evento', this)
         // this.state.tweets.push(this.state.novoTweet)
@@ -40,13 +39,8 @@ class App extends Component {
         <div className="container">
             <Dashboard>
                 <Widget>
-                    <form className="novoTweet" onSubmit={this.adicionaEvento}>
+                    <form className="novoTweet" onSubmit={this.adicionaTweet}>
                         <div className="novoTweet__editorArea">
-                        {/* 
-                            - Fazer o código do disabled
-                            - E fazer o span adicionar a classe novoTweet__status--invalido
-                            quando o tweet tiver mais que 140 caracteres
-                        */}
                         <span className={`novoTweet__status ${
                                 this.state.novoTweet.length > 140
                                     ? 'novoTweet__status--invalido'
