@@ -10,6 +10,12 @@
     - https://www.casadocodigo.com.br/products/livro-tdd
     - 
 
+- Dicas de código
+    - Recriar com react: https://www.felipefialho.com/css-components/
+    - Flexbox: https://flexboxfroggy.com/
+    - Dúvidas de como usar css direito: https://www.youtube.com/watch?v=5PS6ku8NzIE&list=PLirko8T4cEmx5eBb1-9j6T6Gl4aBtZ_5x
+    - Para praticar JavaScripts: https://javascript30.com/
+
 - Lib para mexer com formularios
     - https://jaredpalmer.com/formik/docs/overview
 

@@ -1,7 +1,15 @@
 import React, { Component } from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
-import HomePage from './pages/HomePage';
-import LoginPage from './pages/LoginPage';
+import Loadable from 'react-loadable';
+// import HomePage from './pages/HomePage';
+import LoginPage from './pages/LoginPage'; // Converte pra um Async com Loadable
+
+const HomePageAsync = Loadable({
+    loader: () => import('./pages/HomePage'),
+    loading: () => (<div>Cargando...</div>),
+  });
+  
+  
 
 // class PrivateRoute extends Component {
 const PrivateRoute = (props) => { // Dumb/Presentational Components
@@ -14,17 +22,32 @@ const PrivateRoute = (props) => { // Dumb/Presentational Components
 }
 // }
 
+const Pager404 = () => {
+    return <div>Você falhou na vida</div>
+}
+
+
+const LogoutPage = (props) => {
+    localStorage.removeItem('TOKEN')
+    props.history.push('/login')
+
+    return (
+        <div>Logout...</div>
+    )
+}
 
 export default class Routes extends Component {
     render() {
         return (
             <Switch>
-                <PrivateRoute path="/" exact={true} component={HomePage} />
+                <PrivateRoute path="/" exact={true} component={HomePageAsync} />
                 <Route path="/login" component={LoginPage} />
+                <Route path="/logout" component={LogoutPage} />
+                <Route component={Pager404} />
             </Switch>
         )
     }
 }
 
-// Rota 404
+// Rota 404 - OK 
 // Lazy loading de rotas

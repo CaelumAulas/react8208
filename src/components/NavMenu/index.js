@@ -1,8 +1,10 @@
 import React, { Component } from 'react'
+import { withRouter } from 'react-router-dom'
 import './navMenu.css'
 
 class NavMenu extends Component {
     render() {
+        console.log(this)
         return (
             <nav className="navMenu">
                 <ul className="navMenu__lista">
@@ -19,7 +21,7 @@ class NavMenu extends Component {
                     <a className="navMenu__link" href="/">Hashtags</a>
                 </li>
                 <li className="navMenu__item">
-                    <a className="navMenu__link" href="/">Logout</a>
+                    <a className="navMenu__link" href="/logout">Logout</a>
                 </li>
                 </ul>
             </nav>
@@ -27,4 +29,4 @@ class NavMenu extends Component {
     }
 }
 
-export default NavMenu
+export default withRouter(NavMenu)
