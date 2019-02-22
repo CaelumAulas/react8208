@@ -7,9 +7,8 @@ import Dashboard from '../components/Dashboard'
 import Widget from '../components/Widget'
 import TrendsArea from '../components/TrendsArea'
 import Tweet from '../components/Tweet'
-
-
-c
+import TwitelumService from '../services/TwitelumService';
+import Modal from '../components/Modal';
 
 class App extends Component {
     constructor() {
@@ -24,39 +23,46 @@ class App extends Component {
 
     componentDidMount() {
         console.log('didMount')
-        // Façam o códego que pega os tweets do server:
+        fetch(`https://twitelum-api.herokuapp.com/tweets?X-AUTH-TOKEN=${localStorage.getItem('TOKEN')}`)
+            .then( res => res.json() )
+            .then((tweetsDoServer) => {
+                this.setState({
+                    tweets: tweetsDoServer
+                })
+            })
             // - https://twitelum-api.herokuapp.com/tweets
     }
 
     adicionaTweet = (infosDoEvento) => {
         infosDoEvento.preventDefault()
-        
 
-        fetch(`https://twitelum-api.herokuapp.com/tweets?X-AUTH-TOKEN=${localStorage.getItem('TOKEN')}`, {
-            method: 'POST',
-            body: JSON.stringify({ conteudo: this.state.novoTweet })
-        })
-        .then((respostaDoServer) => {
-            if(respostaDoServer.ok) return respostaDoServer.json()
-            
-            throw new Error('Deu merda :(') 
-        })
-        .then((tweetQueVeioDoServer) => {
-            console.log(tweetQueVeioDoServer)
-            this.setState({
-                tweets: [tweetQueVeioDoServer, ...this.state.tweets],
-                novoTweet: ''
+        TwitelumService.adiciona(this.state.novoTweet)
+            .then((tweetQueVeioDoServer) => {
+                this.setState({
+                    tweets: [tweetQueVeioDoServer, ...this.state.tweets],
+                    novoTweet: ''
+                })
             })
-        })
-        .catch((err) => {
-            console.error(err)
-        })
-        
+            .catch((err) => {
+                console.error(err)
+            })
         // Performance <------------------------------> Legibilidade
     }
 
+    removeTweet = (idDoTweetQueVaiSumir) => {
+        const listaAtualizada = this.state.tweets.filter((tweetAtual) => tweetAtual._id !== idDoTweetQueVaiSumir)
+
+        this.setState({
+            tweets: listaAtualizada
+        })
+
+        TwitelumService.remove(idDoTweetQueVaiSumir)
+            .then((resposta) => {
+                console.log('Dentro do componente', resposta)
+            }) 
+    }
+
   render() {
-    console.log('render')
     return (
       <Fragment>
         <Cabecalho>
@@ -96,12 +102,15 @@ class App extends Component {
                     <div className="tweetsArea">
                         { 
                             this.state.tweets.map((tweetAtual, indice) => {
-                                console.log(tweetAtual)
                                 return (
                                     <Tweet
-                                        key={indice}
+                                        key={tweetAtual._id}
+                                        id={tweetAtual._id}
                                         usuario={tweetAtual.usuario}
-                                        likes={tweetAtual.totalLikes}>
+                                        totalLikes={tweetAtual.totalLikes}
+                                        removivel={tweetAtual.removivel}
+                                        handleRemove={() => this.removeTweet(tweetAtual._id)}
+                                        likeado={tweetAtual.likeado}>
                                         { tweetAtual.conteudo }
                                     </Tweet>
                                 )
@@ -111,6 +120,12 @@ class App extends Component {
                 </Widget>
             </Dashboard>
         </div>
+
+        <Modal isOpen={ false } >
+            <div>
+                uhsdhuadshud
+            </div>
+        </Modal>
       </Fragment>
     );
   }
