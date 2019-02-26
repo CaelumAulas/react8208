@@ -8,9 +8,10 @@ import '../components/NovoTweet/novoTweet.css';
 import Dashboard from '../components/Dashboard'
 import Widget from '../components/Widget'
 import TrendsArea from '../components/TrendsArea'
-import Tweet from '../components/Tweet'
 import TwitelumService from '../services/TwitelumService';
 import Modal from '../components/Modal';
+
+import Tweet from '../containers/Tweet'
 
 class App extends Component {
     constructor() {
