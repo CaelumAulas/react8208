@@ -1,14 +1,36 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
+import propTypes from 'prop-types'
+
 import './tweet.css'
 
-class Tweet extends Component {
-
+class Tweet extends PureComponent {
     constructor(props) {
         super()
         this.state = {
             totalLikes: props.totalLikes,
             likeado: props.likeado
         }
+    }
+
+    static propTypes = {
+        // usuario: propTypes.object,
+        usuario: propTypes.shape({
+            nome: propTypes.string.isRequired,
+            foto: propTypes.string.isRequired
+        }),
+        likeado: propTypes.bool,
+        removivel: propTypes.bool,
+        // children: propTypes.oneOfType([])
+        children: propTypes.node.isRequired,
+        handleRemove: propTypes.func,
+        handleClick: propTypes.func
+    }
+
+    static defaultProps = {
+        removivel: false,
+        likeado: false,
+        handleClick: () => null,
+        handleRemove: () => null
     }
 
     like = () => {
@@ -30,22 +52,30 @@ class Tweet extends Component {
     
     
     render() {
+        const { usuario, removivel, handleClick, handleRemove, children } = this.props;
+
         return (
-            <article className="tweet">
+            <article className="tweet" onClick={(event) => handleClick(event)} >
                 <div className="tweet__cabecalho">
-                    <img className="tweet__fotoUsuario" src={this.props.usuario.foto} alt="" />
-                    <span className="tweet__nomeUsuario">{this.props.usuario.nome}</span>
-                    <a href="/"><span className="tweet__userName">{this.props.user}</span></a>
+                    <img className="tweet__fotoUsuario" src={usuario.foto} alt="" />
+                    <span className="tweet__nomeUsuario">
+                        {usuario.nome}
+                    </span>
+                    <a href="/">
+                        <span className="tweet__userName">
+                            @{usuario.login}
+                        </span>
+                    </a>
                 </div>
                 <p className="tweet__conteudo">
                     <span>
-                        {this.props.children}
+                        {children}
                     </span>
                 </p>
                 <footer className="tweet__footer">
                     {
-                        this.props.removivel && (
-                            <button className="btn--blue btn--remove" onClick={this.props.handleRemove} >
+                        removivel && (
+                            <button className="btn--blue btn--remove" onClick={handleRemove} >
                                 X
                             </button>
                         )

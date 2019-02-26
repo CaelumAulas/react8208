@@ -15,19 +15,25 @@ class App extends Component {
         super()
         this.state = {
             novoTweet: 'xablau',
-            tweets: []
+            tweets: [],
+            tweetAtivo: null
         }
         // this.adicionaEvento = this.adicionaEvento.bind(this)
         console.log('constructor')
     }
 
     componentDidMount() {
+        window.store.subscribe(() => {
+            this.setState({ tweets: window.store.getState() })
+        })
+
         console.log('didMount')
         fetch(`https://twitelum-api.herokuapp.com/tweets?X-AUTH-TOKEN=${localStorage.getItem('TOKEN')}`)
             .then( res => res.json() )
             .then((tweetsDoServer) => {
-                this.setState({
-                    tweets: tweetsDoServer
+                window.store.dispatch({
+                    type: 'LIST_TWEETS',
+                    payload: tweetsDoServer
                 })
             })
             // - https://twitelum-api.herokuapp.com/tweets
@@ -53,7 +59,8 @@ class App extends Component {
         const listaAtualizada = this.state.tweets.filter((tweetAtual) => tweetAtual._id !== idDoTweetQueVaiSumir)
 
         this.setState({
-            tweets: listaAtualizada
+            tweets: listaAtualizada,
+            tweetAtivo: null
         })
 
         TwitelumService.remove(idDoTweetQueVaiSumir)
@@ -62,7 +69,23 @@ class App extends Component {
             }) 
     }
 
+    openTweet = (event, tweetSelecionado) => { // assinatura
+        if (!event.target.closest('.tweet__footer')) {
+            this.setState({
+                tweetAtivo: tweetSelecionado
+            })
+        }
+    }
+
+    fechaModal = (event) => {
+        if (event.target.classList.contains('modal')) {
+            this.setState({ tweetAtivo: null })
+        }
+    }
+
   render() {
+    const { tweetAtivo } = this.state;
+
     return (
       <Fragment>
         <Cabecalho>
@@ -110,6 +133,7 @@ class App extends Component {
                                         totalLikes={tweetAtual.totalLikes}
                                         removivel={tweetAtual.removivel}
                                         handleRemove={() => this.removeTweet(tweetAtual._id)}
+                                        handleClick={(event) => this.openTweet(event, tweetAtual)}
                                         likeado={tweetAtual.likeado}>
                                         { tweetAtual.conteudo }
                                     </Tweet>
@@ -121,10 +145,19 @@ class App extends Component {
             </Dashboard>
         </div>
 
-        <Modal isOpen={ false } >
-            <div>
-                uhsdhuadshud
-            </div>
+        <Modal isOpen={tweetAtivo} onClose={this.fechaModal} >
+            {tweetAtivo && (
+                <Tweet
+                    id={tweetAtivo._id}
+                    usuario={tweetAtivo.usuario}
+                    totalLikes={tweetAtivo.totalLikes}
+                    removivel={tweetAtivo.removivel}
+                    handleRemove={() => this.removeTweet(tweetAtivo._id)}
+                    likeado={tweetAtivo.likeado}
+                >
+                    {tweetAtivo.conteudo}
+                </Tweet>
+            )}
         </Modal>
       </Fragment>
     );
