@@ -11,9 +11,24 @@ import { createStore } from 'redux';
 //     return stateAtualDaStore;
 // }
 
-function tweetsReducer(state = [], action) {
+function tweetsReducer(state = { tweets: [], tweetAtivo: null }, action) {
     if (action.type === 'LIST_TWEETS') {
-        return action.payload;
+        return { ...state, tweets: action.payload };
+
+    } else if (action.type === 'LIKE_TWEET') {
+        const newState = [ ...state.tweets ]
+        const tweetLikeado = newState
+            .find((tweet) => tweet._id === action.payload)
+
+        if (tweetLikeado) {
+            tweetLikeado.totalLikes += tweetLikeado.likeado ? -1 : 1
+            tweetLikeado.likeado = !tweetLikeado.likeado
+        }
+
+        return { ...state, tweets: newState }
+
+    } else if (action.type === 'SELECT_TWEET') {
+        return { ...state, tweetAtivo: action.payload._id }
     }
 
     return state;
@@ -22,4 +37,5 @@ function tweetsReducer(state = [], action) {
 const store = createStore(tweetsReducer);
 
 console.log('Store criada!');
-window.store = store;
+
+export default store;

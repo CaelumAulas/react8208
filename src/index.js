@@ -12,7 +12,9 @@ import './assets/css/notificacao.css'
 // import './assets/css/novoTweet.css'
 // import './index.css';
 
-import './store'
+// import './store'
+import store from './store'
+import { Provider } from 'react-redux';
 
 import * as serviceWorker from './serviceWorker';
 
@@ -20,9 +22,11 @@ import { BrowserRouter } from 'react-router-dom'
 import Routes from './routes';
 
 ReactDOM.render(
-    <BrowserRouter>
-        <Routes />
-    </BrowserRouter>
+    <Provider store={store}>
+        <BrowserRouter>
+            <Routes />
+        </BrowserRouter>
+    </Provider>
     , document.getElementById('root'));
 
 

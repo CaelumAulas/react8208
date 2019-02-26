@@ -1,4 +1,6 @@
 import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
+
 import Cabecalho from '../components/Cabecalho'
 import NavMenu from '../components/NavMenu'
 import '../components/NovoTweet/novoTweet.css';
@@ -15,23 +17,29 @@ class App extends Component {
         super()
         this.state = {
             novoTweet: 'xablau',
-            tweets: [],
-            tweetAtivo: null
+            // tweets: [],
+            // tweetAtivo: null
         }
         // this.adicionaEvento = this.adicionaEvento.bind(this)
-        console.log('constructor')
+        // console.log('constructor')
     }
 
     componentDidMount() {
-        window.store.subscribe(() => {
-            this.setState({ tweets: window.store.getState() })
-        })
+        // window.store.subscribe(() => {
+        //     const store = window.store.getState()
 
-        console.log('didMount')
+        //     this.setState({
+        //         tweets: store.tweets,
+        //         tweetAtivo: store.tweets
+        //             .find(tweet => tweet._id === store.tweetAtivo)
+        //     })
+        // })
+
+        // console.log('didMount')
         fetch(`https://twitelum-api.herokuapp.com/tweets?X-AUTH-TOKEN=${localStorage.getItem('TOKEN')}`)
             .then( res => res.json() )
             .then((tweetsDoServer) => {
-                window.store.dispatch({
+                this.props.dispatch({
                     type: 'LIST_TWEETS',
                     payload: tweetsDoServer
                 })
@@ -45,7 +53,7 @@ class App extends Component {
         TwitelumService.adiciona(this.state.novoTweet)
             .then((tweetQueVeioDoServer) => {
                 this.setState({
-                    tweets: [tweetQueVeioDoServer, ...this.state.tweets],
+                    tweets: [tweetQueVeioDoServer, ...this.props.tweets],
                     novoTweet: ''
                 })
             })
@@ -56,7 +64,7 @@ class App extends Component {
     }
 
     removeTweet = (idDoTweetQueVaiSumir) => {
-        const listaAtualizada = this.state.tweets.filter((tweetAtual) => tweetAtual._id !== idDoTweetQueVaiSumir)
+        const listaAtualizada = this.props.tweets.filter((tweetAtual) => tweetAtual._id !== idDoTweetQueVaiSumir)
 
         this.setState({
             tweets: listaAtualizada,
@@ -71,8 +79,12 @@ class App extends Component {
 
     openTweet = (event, tweetSelecionado) => { // assinatura
         if (!event.target.closest('.tweet__footer')) {
-            this.setState({
-                tweetAtivo: tweetSelecionado
+            // this.setState({
+            //     tweetAtivo: tweetSelecionado
+            // })
+            this.props.dispatch({
+                type: 'SELECT_TWEET',
+                payload: tweetSelecionado
             })
         }
     }
@@ -84,7 +96,7 @@ class App extends Component {
     }
 
   render() {
-    const { tweetAtivo } = this.state;
+    const { tweetAtivo } = this.props;
 
     return (
       <Fragment>
@@ -124,7 +136,7 @@ class App extends Component {
                 <Widget>
                     <div className="tweetsArea">
                         { 
-                            this.state.tweets.map((tweetAtual, indice) => {
+                            this.props.tweets.map((tweetAtual, indice) => {
                                 return (
                                     <Tweet
                                         key={tweetAtual._id}
@@ -164,4 +176,12 @@ class App extends Component {
   }
 }
 
-export default App;
+function mapaDaStoreProComponente (store) {
+    return {
+        tweets: store.tweets,
+        tweetAtivo: store.tweets
+            .find(tweet => tweet._id === store.tweetAtivo)
+    }
+}
+
+export default connect(mapaDaStoreProComponente)(App);
