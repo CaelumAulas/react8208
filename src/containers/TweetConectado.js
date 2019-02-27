@@ -1,7 +1,9 @@
 import Tweet from './../components/Tweet';
 import { connect } from 'react-redux';
 
-function mapaDaStore () {}
+function mapaDaStore () {
+    return {};
+}
 
 function mapaDeActions (dispatch) {
     return {
@@ -14,4 +16,4 @@ function mapaDeActions (dispatch) {
     }
 }
 
-export default connect(mapaDaStore, mapaDeActions)(Tweet);
+export default connect(mapaDaStore)(Tweet);

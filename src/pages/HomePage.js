@@ -37,45 +37,49 @@ class App extends Component {
         // })
 
         // console.log('didMount')
-        fetch(`https://twitelum-api.herokuapp.com/tweets?X-AUTH-TOKEN=${localStorage.getItem('TOKEN')}`)
-            .then( res => res.json() )
-            .then((tweetsDoServer) => {
-                this.props.dispatch({
-                    type: 'LIST_TWEETS',
-                    payload: tweetsDoServer
-                })
-            })
+        // TwitelumService.list()
+        //     .then((tweetsDoServer) => {
+        //         this.props.dispatch({
+        //             type: 'LIST_TWEETS',
+        //             payload: tweetsDoServer
+        //         })
+        //     })
             // - https://twitelum-api.herokuapp.com/tweets
+        this.props.listTweets()
     }
 
     adicionaTweet = (infosDoEvento) => {
         infosDoEvento.preventDefault()
 
-        TwitelumService.adiciona(this.state.novoTweet)
-            .then((tweetQueVeioDoServer) => {
-                this.setState({
-                    tweets: [tweetQueVeioDoServer, ...this.props.tweets],
-                    novoTweet: ''
-                })
-            })
-            .catch((err) => {
-                console.error(err)
-            })
+        this.props.addTweet(this.state.novoTweet)
+
+        // TwitelumService.adiciona(this.state.novoTweet)
+        //     .then((tweetQueVeioDoServer) => {
+        //         this.setState({
+        //             // tweets: [tweetQueVeioDoServer, ...this.props.tweets],
+        //             novoTweet: ''
+        //         })
+
+        //         this.props.dispatch({
+        //             type: 'ADD_TWEET',
+        //             payload: tweetQueVeioDoServer
+        //         })
+        //     })
+        //     .catch((err) => {
+        //         console.error(err)
+        //     })
         // Performance <------------------------------> Legibilidade
     }
 
     removeTweet = (idDoTweetQueVaiSumir) => {
-        const listaAtualizada = this.props.tweets.filter((tweetAtual) => tweetAtual._id !== idDoTweetQueVaiSumir)
+        // const listaAtualizada = this.props.tweets.filter((tweetAtual) => tweetAtual._id !== idDoTweetQueVaiSumir)
 
-        this.setState({
-            tweets: listaAtualizada,
-            tweetAtivo: null
-        })
+        // this.setState({
+        //     tweets: listaAtualizada,
+        //     tweetAtivo: null
+        // })
 
-        TwitelumService.remove(idDoTweetQueVaiSumir)
-            .then((resposta) => {
-                console.log('Dentro do componente', resposta)
-            }) 
+        this.props.remove(idDoTweetQueVaiSumir)
     }
 
     openTweet = (event, tweetSelecionado) => { // assinatura
@@ -83,10 +87,7 @@ class App extends Component {
             // this.setState({
             //     tweetAtivo: tweetSelecionado
             // })
-            this.props.dispatch({
-                type: 'SELECT_TWEET',
-                payload: tweetSelecionado
-            })
+            this.props.selectTweet(tweetSelecionado)
         }
     }
 
@@ -185,4 +186,52 @@ function mapaDaStoreProComponente (store) {
     }
 }
 
-export default connect(mapaDaStoreProComponente)(App);
+function mapaDasActions (dispatch) {
+    return {
+        listTweets: () => {
+            TwitelumService.list()
+                .then((tweetsDoServer) => {
+                    dispatch({
+                        type: 'LIST_TWEETS',
+                        payload: tweetsDoServer
+                    })
+                })
+        },
+        selectTweet: (tweet) => {
+            dispatch({
+                type: 'SELECT_TWEET',
+                payload: tweet
+            })
+        },
+        removeTweet: (idDoTweetQueVaiSumir) => {
+            dispatch({
+                type: 'REMOVE_TWEET',
+                payload: idDoTweetQueVaiSumir
+            })
+    
+            TwitelumService.remove(idDoTweetQueVaiSumir)
+                .then((resposta) => {
+                    console.log('Dentro do componente', resposta)
+                }) 
+        },
+        addTweet: (novoTweet) => {
+            TwitelumService.adiciona(novoTweet)
+                .then((tweetQueVeioDoServer) => {
+                    this.setState({
+                        // tweets: [tweetQueVeioDoServer, ...this.props.tweets],
+                        novoTweet: ''
+                    })
+
+                    dispatch({
+                        type: 'ADD_TWEET',
+                        payload: tweetQueVeioDoServer
+                    })
+                })
+                .catch((err) => {
+                    console.error(err)
+                })
+        }
+    }
+}
+
+export default connect(mapaDaStoreProComponente, mapaDasActions)(App);

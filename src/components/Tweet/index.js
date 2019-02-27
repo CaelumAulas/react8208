@@ -1,6 +1,8 @@
 import React, { PureComponent } from 'react'
 import propTypes from 'prop-types'
 
+import TwitelumService from './../../services/TwitelumService'
+
 import './tweet.css'
 
 class Tweet extends PureComponent {
@@ -33,7 +35,7 @@ class Tweet extends PureComponent {
         handleRemove: () => null
     }
 
-    like = () => {
+    like = async () => {
         // console.log('Tentando dar um like', this.state.likeado)
         // const { likeado, totalLikes } = this.state
 
@@ -42,16 +44,16 @@ class Tweet extends PureComponent {
             // likeado: !likeado
         // })
 
-        this.props.onLike(this.props.id)
+        // this.props.onLike(this.props.id)
 
-        fetch(`https://twitelum-api.herokuapp.com/tweets/${this.props.id}/like?X-AUTH-TOKEN=${localStorage.getItem('TOKEN')}`, {
-            method: 'POST'
-        })
-        .then((res) => { console.log('Status', res) })
+        this.props.dispatch(
+            await TwitelumService.like(this.props.id)
+            // .then(() => ({ type: 'LIKE_TWEET', payload: this.props.id }))
+            // .catch()
+        )
     }
 
     btnIconHeartState = () => this.props.likeado ? 'iconHeart--active' : ''
-    
     
     render() {
         const { usuario, removivel, handleClick, handleRemove, children } = this.props;
