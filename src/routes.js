@@ -4,6 +4,8 @@ import Loadable from 'react-loadable';
 // import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage'; // Converte pra um Async com Loadable
 
+import Profile from './pages/Profile';
+
 const HomePageAsync = Loadable({
     loader: () => import('./pages/HomePage'),
     loading: () => (<div>Cargando...</div>),
@@ -41,6 +43,7 @@ export default class Routes extends Component {
         return (
             <Switch>
                 <PrivateRoute path="/" exact={true} component={HomePageAsync} />
+                <Route path="/profile" component={Profile} />
                 <Route path="/login" component={LoginPage} />
                 <Route path="/logout" component={LogoutPage} />
                 <Route component={Pager404} />
