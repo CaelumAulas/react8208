@@ -16,7 +16,25 @@ import Tweet from '../../containers/TweetConectado'
 import TwitelumService from '../../services/TwitelumService';
 
 class Profile extends PureComponent {
+    componentDidMount() {
+        this.props.listTweets()
+    }
+
+    openTweet = (event, tweetSelecionado) => { // assinatura
+        if (!event.target.closest('.tweet__footer')) {
+            this.props.selectTweet(tweetSelecionado)
+        }
+    }
+
+    fechaModal = (event) => {
+        if (event.target.classList.contains('modal')) {
+            this.props.clearTweet();
+        }
+    }
+
     render() {
+        const { tweetAtivo, tweets, removeTweet } = this.props;
+
         return (
             <Fragment>
                 <Cabecalho>
@@ -35,9 +53,9 @@ class Profile extends PureComponent {
                     </Dashboard>
                     <Dashboard posicao="centro">
                         <Widget>
-                            {/* <div className="tweetsArea">
+                            <div className="tweetsArea">
                                 {
-                                    this.props.tweets.map((tweetAtual, indice) => {
+                                    tweets.map((tweetAtual, indice) => {
                                         return (
                                             <Tweet
                                                 key={tweetAtual._id}
@@ -53,12 +71,12 @@ class Profile extends PureComponent {
                                         )
                                     })
                                 }
-                            </div> */}
+                            </div>
                         </Widget>
                     </Dashboard>
                 </div>
 
-                {/* <Modal isOpen={tweetAtivo} onClose={this.fechaModal} >
+                <Modal isOpen={tweetAtivo} onClose={this.fechaModal} >
                     {tweetAtivo && (
                         <Tweet
                             id={tweetAtivo._id}
@@ -71,11 +89,29 @@ class Profile extends PureComponent {
                             {tweetAtivo.conteudo}
                         </Tweet>
                     )}
-                </Modal> */}
+                </Modal>
                 <Toaster />
             </Fragment>
         );
     }
 }
 
-export default Profile;
+const mapStateToProps = (store) => ({
+    tweets: store.tweets.list,
+    tweetAtivo: store.tweets.list
+        .find(tweet => tweet._id === store.tweets.tweetAtivo)
+});
+
+const mapActionsToProps = (dispatch) => ({
+    listTweets: () => TwitelumService.list(dispatch),
+
+    selectTweet: tweet => dispatch({ type: 'SELECT_TWEET', payload: tweet }),
+
+    clearTweet: () => dispatch({ type: 'CLEAR_TWEET' }),
+
+    removeTweet: async tweetId => dispatch(await TwitelumService.remove(tweetId)),
+
+    addTweet: novoTweet => dispatch(TwitelumService.adiciona(novoTweet)),
+});
+
+export default connect(mapStateToProps, mapActionsToProps)(Profile);
