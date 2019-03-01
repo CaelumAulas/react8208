@@ -46,7 +46,7 @@ class LoginPage extends Component {
                                     senha: ''
                                 }}
                                 onSubmit={(parametro) => this.logar(parametro)}
-                                render={({ handleChange, values, errors }) => (
+                                render={({ isValid, handleChange, values, errors }) => (
                                     <Form className="loginPage__form">
                                         <div className="loginPage__inputWrap">
                                             <label className="loginPage__label" htmlFor="login">Login</label>
@@ -71,7 +71,7 @@ class LoginPage extends Component {
                                     { this.state.errorMessage }
                                 </div> */}
                                         <div className="loginPage__inputWrap">
-                                            <button className="loginPage__btnLogin" type="submit">
+                                            <button className="loginPage__btnLogin" disabled={!isValid} type="submit">
                                                 Logar
                                     </button>
                                         </div>
