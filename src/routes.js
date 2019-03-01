@@ -43,7 +43,7 @@ export default class Routes extends Component {
         return (
             <Switch>
                 <PrivateRoute path="/" exact={true} component={HomePageAsync} />
-                <Route path="/profile" component={Profile} />
+                <Route path="/profile/:profileId" component={Profile} />
                 <Route path="/login" component={LoginPage} />
                 <Route path="/logout" component={LogoutPage} />
                 <Route component={Pager404} />

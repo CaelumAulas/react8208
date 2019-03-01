@@ -73,4 +73,10 @@ export default class TwitelumService {
             throw new Error('Deu ruim');
         }
     }
+
+    static async getUser(username) {
+        const response = await fetch(`https://twitelum-api.herokuapp.com/usuarios/${username}`)
+
+        return response.json();
+    }
 }

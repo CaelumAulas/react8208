@@ -11,6 +11,7 @@ import Widget from '../components/Widget'
 import TrendsArea from '../components/TrendsArea'
 import TwitelumService from '../services/TwitelumService';
 import Modal from '../components/Modal';
+// import Gatinho from '../components/Gatinho';
 
 import Toaster from '../containers/ToasterContainer';
 import Tweet from '../containers/TweetConectado'
@@ -20,8 +21,13 @@ class App extends Component {
         this.props.listTweets()
     }
 
+    componentDidCatch (e) {
+        console.log('error:')
+        console.error(e);
+    }
+
     openTweet = (event, tweetSelecionado) => { // assinatura
-        if (!event.target.closest('.tweet__footer')) {
+        if (!event.target.closest('.tweet__footer') && !event.target.closest('a')) {
             this.props.selectTweet(tweetSelecionado)
         }
     }
@@ -37,6 +43,7 @@ class App extends Component {
 
     return (
       <Fragment>
+        {/* <Gatinho /> */}
         <Cabecalho>
             <NavMenu usuario="@omariosouto" />
         </Cabecalho>

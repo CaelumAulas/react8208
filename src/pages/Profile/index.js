@@ -16,12 +16,29 @@ import Tweet from '../../containers/TweetConectado'
 import TwitelumService from '../../services/TwitelumService';
 
 class Profile extends PureComponent {
+    state = {
+        usuario: {}
+    }
+
     componentDidMount() {
-        this.props.listTweets()
+        this.getUserData(this.props.match.params.profileId)
+    }
+
+    componentDidUpdate(prevProps) {
+        if (this.props.match.params.profileId !== prevProps.match.params.profileId) {
+            this.getUserData(this.props.match.params.profileId)
+        }
+    }
+
+    getUserData (profileId) {
+        this.props.listTweets(profileId)
+
+        TwitelumService.getUser(profileId)
+            .then(resposta => this.setState({ usuario: resposta }))
     }
 
     openTweet = (event, tweetSelecionado) => { // assinatura
-        if (!event.target.closest('.tweet__footer')) {
+        if (!event.target.closest('.tweet__footer') && !event.target.closest('a')) {
             this.props.selectTweet(tweetSelecionado)
         }
     }
@@ -34,6 +51,7 @@ class Profile extends PureComponent {
 
     render() {
         const { tweetAtivo, tweets, removeTweet } = this.props;
+        const { usuario } = this.state; 
 
         return (
             <Fragment>
@@ -45,8 +63,8 @@ class Profile extends PureComponent {
                 </div>
                 <div className="container">
                     <Dashboard>
-                        <Widget>
-                        </Widget>
+                        <h2>{usuario.nome} {usuario.sobrenome}</h2>
+                        <h4>@{usuario.login}</h4>
                         <Widget>
                             <TrendsArea />
                         </Widget>
@@ -83,7 +101,7 @@ class Profile extends PureComponent {
                             usuario={tweetAtivo.usuario}
                             totalLikes={tweetAtivo.totalLikes}
                             removivel={tweetAtivo.removivel}
-                            handleRemove={() => this.removeTweet(tweetAtivo._id)}
+                            handleRemove={() => removeTweet(tweetAtivo._id)}
                             likeado={tweetAtivo.likeado}
                         >
                             {tweetAtivo.conteudo}

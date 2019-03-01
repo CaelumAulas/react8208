@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react'
 import propTypes from 'prop-types'
+import { Link } from 'react-router-dom'
 
 import TwitelumService from './../../services/TwitelumService'
 
@@ -61,15 +62,17 @@ class Tweet extends PureComponent {
         return (
             <article className="tweet" onClick={(event) => handleClick(event)} >
                 <div className="tweet__cabecalho">
-                    <img className="tweet__fotoUsuario" src={usuario.foto} alt="" />
+                    <Link to={`/profile/${usuario.login}`}>
+                        <img className="tweet__fotoUsuario" src={usuario.foto} alt="" />
+                    </Link>
                     <span className="tweet__nomeUsuario">
                         {usuario.nome}
                     </span>
-                    <a href="/">
+                    <Link to={`/profile/${usuario.login}`}>
                         <span className="tweet__userName">
                             @{usuario.login}
                         </span>
-                    </a>
+                    </Link>
                 </div>
                 <p className="tweet__conteudo">
                     <span>
